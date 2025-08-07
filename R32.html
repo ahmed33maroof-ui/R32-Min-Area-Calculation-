@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>R32 Installation Area Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .result {
+      margin-top: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .allowed {
+      color: green;
+    }
+    .rejected {
+      color: red;
+    }
+    .warning {
+      color: orange;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Check Minimum Installation Area for R32 Refrigerant Unit</h2>
+
+  <label for="height">Installation Height (m):</label>
+  <input type="number" id="height" step="0.01" placeholder="e.g. 1.8">
+
+  <label for="mass">Refrigerant Charge (kg):</label>
+  <input type="number" id="mass" step="0.01" placeholder="e.g. 2">
+
+  <label for="availableArea">Available Installation Area (m²):</label>
+  <input type="number" id="availableArea" step="0.01" placeholder="e.g. 4.0">
+
+  <button onclick="calculate()">Calculate</button>
+
+  <div class="result" id="output"></div>
+
+  <script>
+    function calculate() {
+      const height = parseFloat(document.getElementById("height").value);
+      const mass = parseFloat(document.getElementById("mass").value);
+      const availableArea = parseFloat(document.getElementById("availableArea").value);
+
+      const output = document.getElementById("output");
+
+      if (isNaN(height) || isNaN(mass) || isNaN(availableArea)) {
+        output.innerHTML = "❗ Please fill in all the required values.";
+        output.className = "warning";
+        return;
+      }
+
+      const factor = 2.5 * Math.pow(0.306, 5/4) * height;
+      const area = Math.pow(mass / factor, 2);
+      const resultAllowed = availableArea >= area;
+
+      output.innerHTML = `
+        🧮 Minimum Installation Area: ${area.toFixed(2)} m² <br>
+        ${resultAllowed ? "✔️ <span class='allowed'>Allowed for installation</span>" 
+                        : "❌ <span class='rejected'>Not allowed - Area is too small</span>"}
+      `;
+      output.className = "result";
+    }
+  </script>
+</body>
+</html>
